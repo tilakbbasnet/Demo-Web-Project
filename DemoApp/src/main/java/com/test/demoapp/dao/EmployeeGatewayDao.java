@@ -11,8 +11,9 @@ import com.test.demoapp.utility.DBConnection;
 
 public class EmployeeGatewayDao{
 
-	//@Autowired
-	//DBConnection db;
+//	@Autowired
+//	private DBConnection db;
+	
 	DBConnection db = new DBConnection();
 	private static final Logger LOGGER = Logger.getLogger(EmployeeGatewayDao.class);
 	private PreparedStatement pstmt;

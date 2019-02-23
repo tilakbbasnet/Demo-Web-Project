@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<jsp:include  page="header.jsp"/>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%@ page import = "java.io.*,java.util.*" %>
 <%@ page isELIgnored="false"%>
@@ -15,20 +16,36 @@
 .empList {
     float: left;
 	position: relative;
-  	top: 23px;
-  	left: 80px;
+  	top: 10px;
+  	left: 25px;
+}
+
+.updatebtn {
+	border: 1px solid black;
+	border-radius : 4px;
+	padding: 7px;
+}
+
+td input {
+	border: 1px solid black;
+    border-radius:3px;
+}
+
+.edittable { 
+     border-collapse:separate; 
+     border-spacing:0 15px; 
 }
 </style>
 
 <body>
 <div class="empList">
-<a href="${pageContext.servletContext.contextPath}/refreshEmployeeList"> <strong>Employee List</strong> </a>
+<a href="${pageContext.servletContext.contextPath}/refreshEmployeeList"> <strong>Back</strong> </a>
 </div>
 
 <center>
-<h1> Update Employee Info</h1>
+<h3> Update Employee Info</h3>
 <form action="${pageContext.servletContext.contextPath}/editemployee" method="post">
-<table>
+<table class="edittable">
 
 <tr>
 <td>ID: </td>
@@ -67,7 +84,7 @@
 </tr>
 
 <tr>
-<td><input type="Submit" value="Update"/><td>
+<td><input class="updatebtn" type="Submit" value="Update"/><td>
 </tr>
 
 </table>

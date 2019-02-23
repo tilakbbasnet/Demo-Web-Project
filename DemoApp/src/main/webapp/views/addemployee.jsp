@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<jsp:include  page="header.jsp"/>
 
 <!DOCTYPE html PUBLIC="-//W3C/DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -12,24 +13,40 @@
 .empList {
     float: left;
 	position: relative;
-  	top: 23px;
-  	left: 80px;
+  	top: 10px;
+  	left: 25px;
+}
+
+td input {
+	border: 1px solid black;
+    border-radius:3px;
+}
+
+.inputtable { 
+     border-collapse:separate; 
+     border-spacing:0 15px; 
+}
+
+.registerbtn {
+	border: 1px solid black;
+	border-radius : 4px;
+	padding: 7px;
 }
 </style>
 
 <body>
 <div class="empList">
-<a href="${pageContext.servletContext.contextPath}/refreshEmployeeList"> <strong>Employee List</strong> </a>
+<a href="${pageContext.servletContext.contextPath}/refreshEmployeeList"> <strong>Back</strong> </a>
 </div>
 
 <center>
-<h1> Employee Registration</h1>
+<h3> Employee Registration</h3>
 <form action="${pageContext.servletContext.contextPath}/addemployee" method="POST">
-<table>
+<table class="inputtable">
 
 <tr>
 <td>ID:</td>
-<td><input type="number" name="id" value="0" required/>(Employee id is auto-generated so leave 0 for new employee as for now<br> OR enter valid employee id to update info)</td>
+<td><input type="number" name="id" value="0" required/> &nbsp;&nbsp;(Employee id is auto-generated so leave 0 for new employee as for now<br> OR enter valid employee id to update info)</td>
 </tr>
 
 <tr>
@@ -61,7 +78,7 @@
 </tr>
 
 <tr>
-<td><input type="Submit" value="Save"/><td>
+<td><input class="registerbtn" type="Submit" value="Save"/><td>
 </tr>
 
 </table>

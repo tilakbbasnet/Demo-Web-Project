@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<jsp:include  page="header.jsp"/>
 
 <!DOCTYPE html PUBLIC="-//W3C/DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -17,11 +18,11 @@ table, th, td {
 .addemp {
     float: left;
 	position: relative;
-  	top: 38px;
+  	top: 8px;
 }
 .maintable {
 	position: relative;
-  	top: 140px;
+  	top: 90px;
 }
 
 .filters, .welcomemsg {
@@ -31,13 +32,14 @@ table, th, td {
 }
 .filters {
   	position: relative;
-  	top: 52px;
+  	top: 13px;
   	right: 0px;
   	left: 1px;
 }
 
 #filterbyid {
 	padding-left :93px !important;
+	margin-top :30px !important;
 }
 
 .textbox {
@@ -49,24 +51,28 @@ position: relative;
 top: 20px;
 color:blue;
 }
+
+.refresh {
+    float: right;
+    margin-right: 30px;
+}
 </style>
 <body>
 <center>
-<h1 class="welcometitle">Welcome to Employee Management System..</h1>
 
 <div class="addemp">
 <p> <b>Total No. of employees: ${totalemployee}</b> </p>
 <a href="${pageContext.servletContext.contextPath}/addemployee"> <strong> Add Employee </strong> </a> <br/><br/>
-<a href="${pageContext.servletContext.contextPath}/refreshEmployeeList"> <strong> Refresh Employee List </strong> </a>
 </div>
 
 <div class="filters">
+<a class="refresh" href="${pageContext.servletContext.contextPath}/refreshEmployeeList"> <strong> Refresh</strong> </a>
 <form id="filterbyid" action="${pageContext.servletContext.contextPath}/getemployeebyid" method="post">
-<b>Find By ID:</b> <input class="textbox" type="text" name="id" placeholder="Enter ID"/> <br/>
+<b>Find By ID:</b> <input class="textbox" type="text" name="id" placeholder="Enter ID" value="${filteredId}" required/> <br/>
 </form>
 
 <form action="${pageContext.servletContext.contextPath}/getemployeebyquery" method="post" >
-<b>Find By Filter Condition:</b> <input class="textbox" type="text" name="subQuery" placeholder="Enter sub-query"/>
+<b>Find By Filter Condition:</b> <input class="textbox" type="text" name="subQuery" placeholder="Enter sub-query" value="${filterCond}" required/>
 </form>
 </div>
 
@@ -75,6 +81,7 @@ color:blue;
 
 <table>
 <tr>
+<th>S.No.</th>
 <th>Employee ID</th>
 <th>Full Name</th>
 <th>Email</th>
@@ -86,8 +93,11 @@ color:blue;
 </tr>
 
 
+<c:set var="count" value="0" scope="page"/>
 <c:forEach items="${employeeList}" var="emp">
+<c:set var="count" value="${count + 1}" scope="page"/>
 <tr>
+<td>${count}</td>
 <td>${emp.id}</td>
 <td>${emp.name}</td>
 <td>${emp.email}</td>

@@ -4,11 +4,13 @@ import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -16,17 +18,21 @@ import com.test.demoapp.dao.EmployeeGatewayDao;
 import com.test.demoapp.model.Employee;
 
 @Controller
-@SessionAttributes("session")
+@SessionAttributes("username")
 public class MainController {
 
 	private EmployeeGatewayDao employeeGatewayDao = new EmployeeGatewayDao();
 
-	@RequestMapping("/")
-	public String login() {
+	@GetMapping("/")
+	public String login(HttpSession session) {
+		if(session.getAttribute("username")!=null) {
+			//redirect to mainpage if user session exists i.e, user is currently logging in
+			return "redirect:/refreshEmployeeList";
+		}
 		return "index";
 	}
  
-	@RequestMapping(value="/home", method=RequestMethod.POST)
+	@PostMapping("/home")
 	public String mainPage(@RequestParam("username") String username,@RequestParam("password") String password, Model model, HttpServletResponse response) {
 		// checking for valid user
 		if(employeeGatewayDao.checkValidUser(username, password)){
@@ -53,8 +59,12 @@ public class MainController {
 		}
 	}
 
-	@RequestMapping(value="/deleteemployee", method=RequestMethod.GET)
-	public String deleteEmployee(@RequestParam("id") Long id,  Model model) {
+	@GetMapping("/deleteemployee")
+	public String deleteEmployee(@RequestParam("id") Long id,  Model model, HttpSession session) {
+		if(validateSession(session)) {
+			//returning to login page if user session doesnot exist
+			return "redirect:/";
+		}
 		if(employeeGatewayDao.delete(id)) {
 			model.addAttribute("msg","Student deleted successfully !");
 		}else {
@@ -63,8 +73,11 @@ public class MainController {
 		return "redirect:/refreshEmployeeList";
 	}
 
-	@RequestMapping(value="/getemployeebyquery", method=RequestMethod.POST)
-	public String findByQuery(@RequestParam("subQuery") String subQuery, Model model) {
+	@PostMapping("/getemployeebyquery")
+	public String findByQuery(@RequestParam("subQuery") String subQuery, Model model, HttpSession session) {
+		if(validateSession(session)) {
+			return "redirect:/";
+		}
 		List<Employee> empList;
 		empList = employeeGatewayDao.find(subQuery);
 		if(empList.size()==0) {
@@ -72,11 +85,15 @@ public class MainController {
 		}
 		model.addAttribute("employeeList", empList);
 		model.addAttribute("totalemployee", empList.size());
+		model.addAttribute("filterCond", subQuery);
 		return "mainpage";
 	}
 
-	@RequestMapping(value="/getemployeebyid", method=RequestMethod.POST)
-	public String findEmployeeById(@RequestParam("id") Long id, Model model) {
+	@PostMapping("/getemployeebyid")
+	public String findEmployeeById(@RequestParam("id") Long id, Model model, HttpSession session) {
+		if(validateSession(session)) {
+			return "redirect:/";
+		}
 		List<Employee> empList;
 		empList = employeeGatewayDao.findById(id);
 		if(empList.size() == 0) {
@@ -84,12 +101,16 @@ public class MainController {
 		}
 		model.addAttribute("employeeList", empList);
 		model.addAttribute("totalemployee", empList.size());
+		model.addAttribute("filteredId", id);
 		return "mainpage";
 	}
 
 	//request mapping to open the form for edit operation
-	@RequestMapping(value="/editemployee", method=RequestMethod.GET)
-	public String editEmployeeInfo(@RequestParam("id") Long id, Model model) {
+	@GetMapping("/editemployee")
+	public String editEmployeeInfo(@RequestParam("id") Long id, Model model,  HttpSession session) {
+		if(validateSession(session)) {
+			return "redirect:/";
+		}
 		Employee updatedEmployee=null;
 		List<Employee> empList = employeeGatewayDao.findById(id);
 		Object[] array = empList.toArray();
@@ -101,7 +122,7 @@ public class MainController {
 	}
 
 	//request mapping to update student info after changes are made
-	@RequestMapping(value="/editemployee", method=RequestMethod.POST)
+	@PostMapping("/editemployee")
 	public String updateEmployeeInfo(@ModelAttribute("updatedEmployee") Employee emp, Model model) {
 		if(employeeGatewayDao.save(emp)) {
 			model.addAttribute("msg", "Employee Record Updated Successfully !");
@@ -112,13 +133,16 @@ public class MainController {
 	}
 
 	//request mapping to open form for new employee registration or update existing employee based on the available of emp id info
-	@RequestMapping("/addemployee")
-	public String addEmployee(Model model) {
+	@GetMapping("/addemployee")
+	public String addEmployee(Model model, HttpSession session) {
+		if(validateSession(session)) {
+			return "redirect:/";
+		}
 		model.addAttribute("newEmployee", new Employee());
 		return "addemployee";
 	}
 
-	@RequestMapping(value="/addemployee", method=RequestMethod.POST)
+	@PostMapping("/addemployee")
 	public String saveEmployee(@ModelAttribute("newEmployee") Employee emp, Model model) {
 		if(employeeGatewayDao.save(emp)) {
 			model.addAttribute("msg", "Employee Registered Successfully !");
@@ -128,13 +152,30 @@ public class MainController {
 		return "redirect:/refreshEmployeeList";
 	}
 
-	@RequestMapping("/refreshEmployeeList")
-	public String refreshEmployeeList(Model model) {
+	@GetMapping("/refreshEmployeeList")
+	public String refreshEmployeeList(Model model, HttpSession session) {
+		if(validateSession(session)) {
+			return "redirect:/";
+		}
 		List<Employee> empList;
 		empList = employeeGatewayDao.findAll();
 		model.addAttribute("employeeList", empList);
 		int totalEmployee = employeeGatewayDao.count();
 		model.addAttribute("totalemployee", Integer.toString(totalEmployee));
 		return "mainpage";
+	}
+	
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		//destroying current session and logging out
+		session.invalidate();
+		return "index";
+	}
+	
+	public boolean validateSession(HttpSession session) {
+	if(session.getAttribute("username")==null) {
+		return true;
+	}
+	return false;
 	}
 }

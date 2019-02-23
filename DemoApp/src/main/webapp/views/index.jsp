@@ -29,14 +29,31 @@ border-radius: 2px;
 .mainbody{
 position: relative;
 top: 90px;
+border-style: solid;
+border-color : blue;
+width: 400px;
+height: 330px;
+margin:0 auto;
+display: grid;
+}
+
+.logintable { 
+     border-collapse:separate; 
+     border-spacing:0 15px;
+}
+
+#adminlogin {
+	margin-top:35px;
+	color: red;
 }
 </style>
 
-<body class="mainbody">
 <center>
-<h2> Admin Login </h2>
+<h2>Employee Management System</h2>
+<body class="mainbody">
+<h2 id="adminlogin"> Admin Login </h2>
 <form action="${pageContext.servletContext.contextPath}/home" method="post">
-<table>
+<table class="logintable">
 
 <tr>
 <td><b>Username:</b> </td>
@@ -57,6 +74,6 @@ top: 90px;
 
 </form>
 <b style="color:red;">${param.loginfailmsg}</b>
-</center>
 </body>
+</center>
 </html>
