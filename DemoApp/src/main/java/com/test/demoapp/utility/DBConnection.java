@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import org.apache.log4j.Logger;
 
-//@Repository("pp")
 public class DBConnection {
 	private final Logger LOGGER = Logger.getLogger(DBConnection.class);
 	public Connection con=null;

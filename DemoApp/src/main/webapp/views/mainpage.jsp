@@ -18,11 +18,15 @@ table, th, td {
 .addemp {
     float: left;
 	position: relative;
-  	top: 8px;
+  	top: -10px;
 }
 .maintable {
 	position: relative;
   	top: 90px;
+}
+.emplist {
+  	width: 100%;
+  	margin-bottom: 80px;
 }
 
 .filters, .welcomemsg {
@@ -32,8 +36,8 @@ table, th, td {
 }
 .filters {
   	position: relative;
-  	top: 13px;
   	right: 0px;
+  	top: -5px;
   	left: 1px;
 }
 
@@ -56,13 +60,33 @@ color:blue;
     float: right;
     margin-right: 30px;
 }
+
+table td, th{
+	text-align: center;
+	padding: 5px;
+}
+
+#excelbtn, #savebtn {
+	margin-right: 45px;
+    float: right;
+	border: 1px solid black;
+	border-radius : 5px;
+	padding: 4px;
+    width:100px;
+    background-color: green;
+    color: white;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+}
 </style>
 <body>
 <center>
 
 <div class="addemp">
+<input type="button" id="excelbtn" value="Excel" onclick="location.href='${pageContext.servletContext.contextPath}/excelGeneration'"/>
 <p> <b>Total No. of employees: ${totalemployee}</b> </p>
-<a href="${pageContext.servletContext.contextPath}/addemployee"> <strong> Add Employee </strong> </a> <br/><br/>
+<input id="savebtn" type="button" value="Add Employee" onclick="location.href='${pageContext.servletContext.contextPath}/addemployee'"/> <br/><br/>
 </div>
 
 <div class="filters">
@@ -79,7 +103,7 @@ color:blue;
 <form class="maintable">
 <h2> Employee List</h2>
 
-<table>
+<table class="emplist">
 <tr>
 <th>S.No.</th>
 <th>Employee ID</th>

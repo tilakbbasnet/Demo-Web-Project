@@ -2,9 +2,17 @@ package com.test.demoapp.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.log4j.Logger;
 import com.test.demoapp.model.Employee;
 import com.test.demoapp.utility.DBConnection;
@@ -170,4 +178,48 @@ public class EmployeeGatewayDao{
 		}
 		return employeeList;
 	}
+	
+	public Map<String, List<List<String>>> findAllSalaryInfo(){
+		System.err.println("inside employee gateway dao");
+		Map<String, List<List<String>>> map = null;
+		QueryRunner runner;
+		String query = "SELECT * FROM EMPLOYEE ";
+		DBConnection db = new DBConnection();
+		try {
+		runner = new QueryRunner();
+		map = runner.query(db.con, query, listOfMapString);
+		LOGGER.info("Total employee records fetched");
+		}catch (Exception e) {
+			LOGGER.error("Error during retrieving list of map by Query Runner ",e);
+		}finally {
+			db.endConnection();
+		}
+		return map;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	ResultSetHandler<Map<String, List<List<String>>>> listOfMapString = new ResultSetHandler<Map<String, List<List<String>>>>() {
+    public Map<String, List<List<String>>> handle(ResultSet rs) throws SQLException {
+			ResultSetMetaData metadata = rs.getMetaData();
+			List<List<String>> result = new ArrayList();
+			List<List<String>> columnNameList = null;
+			Map<String, List<List<String>>> response = null;
+			int totalColumn = metadata.getColumnCount();
+			String[] columns = new String[totalColumn];
+			for(int i=1; i <= totalColumn; i++) {
+				columns[i-1] = metadata.getColumnName(i);
+			}
+			columnNameList.add(Arrays.asList(columns));
+			while(rs.next()) {
+				Map<String, String> data = new HashMap();
+				for(String columnName : columns) {
+					data.put(columnName,rs.getString(columnName));
+				}
+				//result.add(data);
+			}
+			response.put("columns",columnNameList);
+			response.put("data", result);
+			return response;
+		}
+	};
 }
